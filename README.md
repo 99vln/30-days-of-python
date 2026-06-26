@@ -54,4 +54,4 @@ Cada dia está em sua respectiva pasta dentro de `/projects`. Para executar:
 2. Execute: `python main.py`
 
 ---
-**Mantido por:** [nine](99vln) 👋
+**Mantido por:** [Gabriel](99vln) 👋
