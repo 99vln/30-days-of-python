@@ -20,16 +20,16 @@ Este repositório contém minha jornada de 30 dias aprendendo Python do absoluto
 ### 🟢 Bloco 1: Utilidade Pessoal (Dias 1-10)
 - [x] **Dia 1: Timer de Estudo (CLI)**
     - **Aprendizado:** Manipulação do módulo `time`, loops `while`, entrada de dados e formatação de strings com `\r`.
-    - [Ver código](https://github.com/heislogic/30-days-of-python/blob/main/projects/day01_timer/main.py)
+    - [Ver código](https://github.com/99vln/30-days-of-python/blob/main/projects/day01_timer/main.py)
 - [x] **Dia 2: Organizador de Arquivos**
     - **Aprendizado:** Automação de sistema com `os` e `shutil`. Uso de dicionários para mapeamento, criação de diretórios e tratamento de exceções.
-    - [Ver código](https://github.com/heislogic/30-days-of-python/blob/main/projects/day02_file_organizer/main.py)
+    - [Ver código](https://github.com/99vln/30-days-of-python/blob/main/projects/day02_file_organizer/main.py)
 - [x] **Dia 3: Gerador de Senha Segura**
     - **Aprendizado:** Manipulação das bibliotecas `random` e `string`, iteração com variáveis descartáveis (`_`) e multiplicação de strings para interface.
-    - [Ver código](https://github.com/heislogic/30-days-of-python/blob/main/projects/day03_password_generator/main.py)
+    - [Ver código](https://github.com/99vln/30-days-of-python/blob/main/projects/day03_password_generator/main.py)
 - [x] **Dia 4: Lista de Tarefas Interativa**
     - **Aprendizado:** CRUD em memória (Create, Read, Delete), métodos de lista (`.append()`, `.pop()`), função `enumerate()` para índices amigáveis, tratamento de erros e integração com SO via `subprocess` para limpeza de terminal.
-    - [Ver código](https://github.com/heislogic/30-days-of-python/blob/main/projects/day04_todo_list/main.py)
+    - [Ver código](https://github.com/99vln/30-days-of-python/blob/main/projects/day04_todo_list/main.py)
 - [ ] **Dia 5: Controle simples de gastos**
     - **Foco:** Tipagem numérica (`float`), cálculos acumulativos e formatação de moeda.
 - [ ] **Dia 6: Lembrete com horário**
