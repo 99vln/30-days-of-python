@@ -1,6 +1,9 @@
 import os
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
 from typing import List
+
+ARQUIVO_DADOS = "financas.json"
 
 @dataclass
 class Transacao:
@@ -12,6 +15,7 @@ class GerenciadorFinanceiro:
     def __init__(self) -> None:
         self.transacoes: List[Transacao] = []
         self.saldo_total: float = 0.0
+        self.carregar_dados()
 
     def adicionar_transacao(self, tipo: str, valor: float, descricao: str) -> None:
         nova_transacao = Transacao(tipo, valor, descricao)
@@ -22,8 +26,52 @@ class GerenciadorFinanceiro:
         else:
             self.saldo_total -= valor
 
+        self.salvar_dados()
+
     def obter_extrato(self) -> List[Transacao]:
         return self.transacoes
+
+    def limpar_historico(self) -> None:
+        self.transacoes = []
+        self.saldo_total = 0.0
+        self.salvar_dados()
+
+    def salvar_dados(self) -> None:
+        try:
+            dados_para_salvar = [asdict(t) for t in self.transacoes]
+
+            with open(ARQUIVO_DADOS, "w", encoding="utf-8") as arquivo:
+                json.dump(dados_para_salvar, arquivo, indent=4, ensure_ascii=False)
+        except IOError as e:
+            print(f"Erro ao salvar os dados: {e}")
+            input("Pressione Enter para continuar...")
+
+    def carregar_dados(self) -> None:
+        if not os.path.exists(ARQUIVO_DADOS):
+            return
+        try:
+            with open(ARQUIVO_DADOS, "r", encoding="utf-8") as arquivo:
+                dados_carregados = json.load(arquivo)
+
+                for item in dados_carregados:
+                    transacao = Transacao(
+                        tipo=item["tipo"],
+                        valor=item["valor"],
+                        descricao=item["descricao"]
+                    )
+                    self.transacoes.append(transacao)
+
+                    if transacao.tipo == "receita":
+                        self.saldo_total += transacao.valor
+                    else:
+                        self.saldo_total -= transacao.valor
+        except (IOError, json.JSONDecodeError):
+            print("Erro ao carregar os dados. O arquivo pode estar corrompido.")
+            self.limpar_historico()
+            input("Pressione Enter para continuar...")
+        except IOError as e:
+            print(f"Erro ao carregar os dados: {e}")
+            input("Pressione Enter para continuar...")
 
 
 
