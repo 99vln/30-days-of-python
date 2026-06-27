@@ -1,64 +1,96 @@
 import datetime
 import time
 import os
+import sys
+from dataclasses import dataclass
+from typing import Tuple, Optional
 
+@dataclass
+class Lembrete:
+    hora_alvo: datetime.datetime
+    mensagem: str
 
-def clear_screen():
+    def calcular_segundos_restantes(self) -> float:
+        agora = datetime.datetime.now()
+        return (self.hora_alvo - agora).total_seconds()
+
+    def iniciar_monitoramento(self) -> None:
+        segundos_espera = self.calcular_segundos_restantes()
+        print(f"\n⏳ Lembrete agendado para {self.hora_alvo.strftime('%H:%M')}.")
+        print(f"Aguardando {int(segundos_espera // 60)} minutos e {int(segundos_espera % 60)} segundos...")
+
+        while True:
+            restante = self.calcular_segundos_restantes()
+
+            if restante <= 0:
+                break
+
+            if restante > 60:
+                print(f"🕒 Faltam {int(restante // 60)} minutos... ", end='\r')
+
+                time.sleep(10)
+
+        self._disparar_alarme()
+
+    def _disparar_alarme(self) -> None:
+        print("\n" + "=" * 50)
+        print(f"🔔 {self.mensagem.upper()} 🔔")
+        print("=" * 50)
+        print('\a')
+
+def limpar_tela() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def main():
-    clear_screen()
-    print("⏰ Lembrete de Tarefas")
+def processar_input_hora(hora_input: str) -> Optional[Tuple[int, int]]:
+    try:
+        horas_str, minutos_str = hora_input.split(':')
+        horas, minutos = int(horas_str), int(minutos_str)
+        if 0 <= horas <= 23 and 0 <= minutos <= 59:
+            return horas, minutos
+    except ValueError:
+        pass
+
+    return None
+
+
+def main() -> None:
+    limpar_tela()
+    print("⏰ Sistema de Lembrete")
 
     while True:
-        hora_input = input("Digite a hora para o lembrete (HH:MM) ou 'sair' para encerrar: ").strip()
+        hora_input = input("\nDigite a hora (%H:%M) ou 'sair' para encerrar: ").strip().lower()
 
-        try:
-            horas, minutos = map(int, hora_input.split(':'))
-            if 0 <= horas <= 23 and 0 <= minutos <= 59:
-                break
-            else:
-                print("Horario invalido!")
-        except ValueError:
-            print("Formato invalido!")
+        if hora_input == 'sair':
+            print("Encerrando o programa.")
+            sys.exit(0)
+
+        horario_valido = processar_input_hora(hora_input)
+        if horario_valido:
+            horas, minutos = horario_valido
+            break
+        else:
+            print("❌ Formato invalido!")
 
     mensagem = input("Digite a mensagem do lembrete: ").strip()
     if not mensagem:
         mensagem = "ALERTA! Horario Chegou!"
 
     agora = datetime.datetime.now()
-    hora_lembrete = datetime.datetime(
-        agora.year, agora.month, agora.day, horas, minutos
-    )
+    hora_lembrete = datetime.datetime(agora.year, agora.month, agora.day, horas, minutos)
+
     if hora_lembrete <= agora:
         print(f"\n⚠️ O horario {hora_input} ja passou hoje.")
-
         opcao = input("Deseja agendar para amanha no mesmo horario? (S/N)").strip().upper()
+
         if opcao == 'S':
             hora_lembrete += datetime.timedelta(days=1)
-            print(f"Lembrete agendado para amanha as {hora_lembrete.strftime('%H:%M')}.")
         else:
-            print("Encerrando o programa.")
+            print("Opcao cancelada. Encerrando...")
             return
 
-    segundos_espera = (hora_lembrete - agora).total_seconds()
-    print(f"\n⏳ Lembrete agendado para {hora_lembrete.strftime('%H:%M')}.")
-    print(f"Aguardando {int(segundos_espera // 60)} minutos e {int(segundos_espera % 60)} segundos...")
+    lembrete = Lembrete(hora_alvo=hora_lembrete, mensagem=mensagem)
 
-    while True:
-        agora = datetime.datetime.now()
-        if agora >= hora_lembrete:
-            break
-        restante = (hora_lembrete - agora).total_seconds()
-        if restante > 60:
-            print(f"🕒 Faltam {int(restante // 60)}minutos...", end='\r')
-        time.sleep(30)
-
-    print("\n" + "="*50)
-    print(f"🔔 {mensagem.upper()} 🔔")
-    print("="*50)
-    print('\a')
-
+    lembrete.iniciar_monitoramento()
 
 if __name__ == "__main__":
     main()
